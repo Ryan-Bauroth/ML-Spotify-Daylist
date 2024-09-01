@@ -2,6 +2,7 @@ import asyncio
 import os
 import time
 from datetime import datetime
+
 import openmeteo_requests
 import requests_cache
 import spotipy
@@ -15,6 +16,8 @@ scope = "user-library-read playlist-read-private user-read-playback-state user-m
 clientID = os.getenv('CLIENT_ID')
 clientSecret = os.getenv('CLIENT_SECRET')
 redirect_uri = os.getenv('REDIRECT_URI')
+longitude = os.getenv('LONGITUDE')
+latitude = os.getenv('LATITUDE')
 
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(client_id=clientID, client_secret=clientSecret, scope=scope,
@@ -36,8 +39,8 @@ async def get_weather_info():
     # The order of variables in hourly or daily is important to assign them correctly below
     url = "https://api.open-meteo.com/v1/forecast"
     params = {
-        "latitude": 35.797459,
-        "longitude": -78.921082,
+        "latitude": latitude,
+        "longitude": longitude,
         "current": "temperature_2m",
         "temperature_unit": "fahrenheit",
         "models": "gfs_seamless"
@@ -55,12 +58,20 @@ async def get_weather_info():
 
 
 def get_spotify_playing():
-    return sp.current_playback(market=None, additional_types="track")
+    try:
+        return sp.current_playback(market=None, additional_types="track")
+    except spotipy.exceptions.SpotifyException:
+        print("error getting playback spotify exception")
+        return None
+    except:
+        print("error getting playback not spotify exception")
+        return None
 
 
 def get_spotify_audio_features(playback):
     if playback:
         return sp.audio_features([playback["item"]["id"]])
+
 
 def get_spotify_genre(playback):
     genre_arr = []
@@ -72,6 +83,7 @@ def get_spotify_genre(playback):
                 genre_arr.append(genre.replace(".", ""))
     return genre_arr
 
+
 def get_spotify_popularity(playback):
     return playback["item"]["popularity"]
 
@@ -81,14 +93,20 @@ def get_hour_info():
     arr = now.strftime("%H:%M:%S").split(":")
     return str(int(arr[2]) + int(arr[1]) * 60 + int(arr[0]) * 3600)
 
+
 def get_weekday_info():
     return datetime.today().weekday()
+
 
 def get_month_info():
     return datetime.today().month
 
+
 def main():
+    #gets information about the users current playback
     playback = get_spotify_playing()
+
+    #gets the most recent item in the datatable
     f = open('data.csv', 'a+')
     f.seek(0)
     lines = f.readlines()
@@ -96,7 +114,12 @@ def main():
     if lines:
         lastline = lines[-1].strip().split(",")
 
-    if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback["progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
+    #only updates datatable if user is listening to music, the current song being played is not already stored in the datatable,
+    #and the song has been playing for 15 seconds
+    if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback[
+        "progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
+
+        #gets datatable information and formats it
         artists = ""
         for artist in playback["item"]["artists"]:
             artists += str(artist["name"]).replace(".", "") + "."
@@ -107,6 +130,36 @@ def main():
         day_of_week = str(get_weekday_info())
         month = str(get_month_info())
         temp = str(asyncio.run(get_weather_info()))
+
+        """
+        Song attributes (all stored as strings):
+        
+        - **Song Name**: The name of the song
+        - **Artist Name(s)**: The artist(s) of the song
+        - **Genre(s)**: The genre(s) of the artist(s)
+        - **Popularity**: Rating (0-100) of the song's popularity
+        - **Duration**: Duration of the track in milliseconds
+        - **Key**: Track key (0=C, 1=C♯/D♭, ..., -1=unknown)
+        
+        Spotify attributes (0.0 least / 1.0 most, unless noted):
+        
+        - **Danceability**: How suitable a track is for dancing (tempo, beat)
+        - **Energy**: Intensity and activity (e.g. death metal high, Bach low)
+        - **Loudness**: Overall loudness in dB (typically -60 to 0 dB)
+        - **Speechiness**: Presence of spoken words (values >0.66 mostly spoken, 0.33-0.66 speech+music, <0.33 mostly music)
+        - **Acousticness**: Confidence measure of a track being acoustic
+        - **Instrumentalness**: No vocals probability (values >0.5 likely instrumental)
+        - **Liveness**: Audience presence (values >0.8 likely live)
+        - **Valence**: Musical positiveness (high positive, low negative)
+        - **Tempo**: Beats per minute (BPM)
+        
+        Additional attributes:
+        - **Temp**: Temperature in Fahrenheit
+        - **hour_info**: Current hour in seconds
+        - **day_of_week**: Day song played (0=Monday, 6=Sunday)
+        - **month**: Month song played (1=January, 12=December)
+        """
+
         data = [
             str(playback["item"]["name"]).replace(",", ""),
             artists,
@@ -122,6 +175,7 @@ def main():
             str(audio_features[0]["valence"]),
             str(audio_features[0]["tempo"]),
             str(audio_features[0]["duration_ms"]),
+            str(audio_features[0]["key"]),
             temp,
             get_hour_info(),
             day_of_week,
@@ -130,6 +184,7 @@ def main():
         print(data)
         f.write(", ".join(data) + "\n")
         f.close()
+
 
 """
 Runs the main function every 10 seconds.
