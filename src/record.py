@@ -119,7 +119,7 @@ def main():
     if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback[
         "progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
 
-        #gets datatable information and formats it
+        #gets datatable information and formats it as str
         artists = ""
         for artist in playback["item"]["artists"]:
             artists += str(artist["name"]).replace(".", "") + "."
