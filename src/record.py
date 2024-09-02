@@ -1,28 +1,28 @@
-import asyncio
 import os
+from dotenv import load_dotenv
 import time
 from datetime import datetime
-
 import openmeteo_requests
+import asyncio
 import requests_cache
-import spotipy
-from dotenv import load_dotenv
 from retry_requests import retry
+import spotipy
 from spotipy import SpotifyOAuth
 
+#get enviroment variables from .env file & set scopes const
 load_dotenv()
-
-scope = "user-library-read playlist-read-private user-read-playback-state user-modify-playback-state user-read-currently-playing"
 clientID = os.getenv('CLIENT_ID')
 clientSecret = os.getenv('CLIENT_SECRET')
 redirect_uri = os.getenv('REDIRECT_URI')
 longitude = os.getenv('LONGITUDE')
 latitude = os.getenv('LATITUDE')
+scope = "user-library-read playlist-read-private user-read-playback-state user-modify-playback-state user-read-currently-playing"
 
+
+#initialize spotipy
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(client_id=clientID, client_secret=clientSecret, scope=scope,
                               redirect_uri=redirect_uri))
-
 
 async def get_weather_info():
     """
@@ -58,6 +58,11 @@ async def get_weather_info():
 
 
 def get_spotify_playing():
+    """
+    This function is used to retrieve information about the current playback of a user
+
+    :return: The current playback information, or None if an error occurs.
+    """
     try:
         return sp.current_playback(market=None, additional_types="track")
     except spotipy.exceptions.SpotifyException:
@@ -69,11 +74,23 @@ def get_spotify_playing():
 
 
 def get_spotify_audio_features(playback):
+    """
+    :param playback: A dictionary object representing the current playback state in the Spotify API.
+    :return: A list of audio features for the currently playing track.
+
+    If the user is listening to music (thus playback exists), uses Spotipy call to get audio features
+    """
     if playback:
         return sp.audio_features([playback["item"]["id"]])
 
 
 def get_spotify_genre(playback):
+    """
+    :param playback: The playback information containing the currently playing track and artist(s)
+    :return: A list of genres associated with the currently playing track and artist(s)
+
+    Retrieves an array of genres to describe the currently playing track.
+    """
     genre_arr = []
     for artist in playback["item"]["artists"]:
         artist_id = artist["id"]
@@ -85,24 +102,49 @@ def get_spotify_genre(playback):
 
 
 def get_spotify_popularity(playback):
+    """
+    :param playback: The current playback context, including the currently playing track.
+    :return: The popularity value of the current track.
+
+    Retrieves the popularity of the currently playing track from the Spotify API.
+    """
     return playback["item"]["popularity"]
 
 
 def get_hour_info():
+    """
+    Calculates the number of seconds passed since midnight.
+
+    :return: The number of seconds passed since midnight.
+    """
     now = datetime.now()
     arr = now.strftime("%H:%M:%S").split(":")
     return str(int(arr[2]) + int(arr[1]) * 60 + int(arr[0]) * 3600)
 
 
 def get_weekday_info():
+    """
+    Get the current weekday information.
+
+    :return: An integer representing the current weekday. Monday is 0 and Sunday is 6.
+    """
     return datetime.today().weekday()
 
 
 def get_month_info():
+    """
+    Returns the current month.
+
+    :return: Current month as an integer.
+    """
     return datetime.today().month
 
 
 def main():
+    """
+    Main function of record.py file
+    """
+
     #gets information about the users current playback
     playback = get_spotify_playing()
 
