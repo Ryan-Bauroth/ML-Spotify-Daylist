@@ -16,4 +16,9 @@ For either option below, the first step is to clone the repository by copying th
 1) Run the record.py file. This will redirect you to localhost on your device. Allow my app to access your data.
 2) Listen to music & it will automatically be stored in the data.csv file.
 
+**Here is an example dataset graphed:**
+![time:valence daily chart d3](https://github.com/user-attachments/assets/2fed2504-bdd2-4902-accb-e5821f035b47)
+_X-axis is time (seconds passed since midnight). Y-axis is valance (positivity of the music. 1 is the most positive). Colors represent different days of the week._
+
+
 ### How to Run the Prediction Algorithm
