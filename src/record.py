@@ -9,7 +9,7 @@ from retry_requests import retry
 import spotipy
 from spotipy import SpotifyOAuth
 
-#get enviroment variables from .env file & set scopes const
+# get environment variables from .env file & set scopes const
 load_dotenv()
 clientID = os.getenv('CLIENT_ID')
 clientSecret = os.getenv('CLIENT_SECRET')
@@ -19,7 +19,7 @@ latitude = os.getenv('LATITUDE')
 scope = "user-library-read playlist-read-private user-read-playback-state user-modify-playback-state user-read-currently-playing"
 
 
-#initialize spotipy
+# initialize spotipy
 sp = spotipy.Spotify(
     auth_manager=SpotifyOAuth(client_id=clientID, client_secret=clientSecret, scope=scope,
                               redirect_uri=redirect_uri))
@@ -65,12 +65,15 @@ def get_spotify_playing():
     """
     try:
         return sp.current_playback(market=None, additional_types="track")
-    except spotipy.exceptions.SpotifyException:
+    except spotipy.exceptions.SpotifyException as error:
         print("error getting playback spotify exception")
+        print(error)
         return None
-    except:
+    except Exception as error:
         print("error getting playback not spotify exception")
+        print(error)
         return None
+
 
 
 def get_spotify_audio_features(playback):
@@ -145,10 +148,10 @@ def main():
     Main function of record.py file
     """
 
-    #gets information about the users current playback
+    # gets information about the users current playback
     playback = get_spotify_playing()
 
-    #gets the most recent item in the datatable
+    # gets the most recent item in the datatable
     f = open('data.csv', 'a+')
     f.seek(0)
     lines = f.readlines()
@@ -156,80 +159,86 @@ def main():
     if lines:
         lastline = lines[-1].strip().split(",")
 
-    #only updates datatable if user is listening to music, the current song being played is not already stored in the datatable,
-    #and the song has been playing for 15 seconds
-    if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback[
-        "progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
+    # this try catch is included just in case something goes wrong with spotify (likely a Spotify AI DJ issue)
+    try:
+        # only updates datatable if user is listening to music, the current song being played is not already stored in the
+        # datatable, and the song has been playing for 15 seconds
+        if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback[
+            "progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
 
-        #gets datatable information and formats it as str
-        artists = ""
-        for artist in playback["item"]["artists"]:
-            artists += str(artist["name"]).replace(".", "") + "."
-        artists = artists.rstrip(".")
-        audio_features = get_spotify_audio_features(playback)
-        genres = get_spotify_genre(playback)
-        popularity = str(get_spotify_popularity(playback))
-        day_of_week = str(get_weekday_info())
-        month = str(get_month_info())
-        temp = str(asyncio.run(get_weather_info()))
+            # gets datatable information and formats it as str
+            artists = ""
+            for artist in playback["item"]["artists"]:
+                artists += str(artist["name"]).replace(".", "") + "."
+            artists = artists.rstrip(".")
+            audio_features = get_spotify_audio_features(playback)
+            genres = get_spotify_genre(playback)
+            popularity = str(get_spotify_popularity(playback))
+            day_of_week = str(get_weekday_info())
+            month = str(get_month_info())
+            temp = str(asyncio.run(get_weather_info()))
 
-        """
-        Song attributes (all stored as strings):
-        
-        - **Song Name**: The name of the song
-        - **Artist Name(s)**: The artist(s) of the song
-        - **Genre(s)**: The genre(s) of the artist(s)
-        - **Popularity**: Rating (0-100) of the song's popularity
-        - **Duration**: Duration of the track in milliseconds
-        - **Key**: Track key (0=C, 1=C♯/D♭, ..., -1=unknown)
-        
-        Spotify attributes (0.0 least / 1.0 most, unless noted):
-        
-        - **Danceability**: How suitable a track is for dancing (tempo, beat)
-        - **Energy**: Intensity and activity (e.g. death metal high, Bach low)
-        - **Loudness**: Overall loudness in dB (typically -60 to 0 dB)
-        - **Speechiness**: Presence of spoken words (values >0.66 mostly spoken, 0.33-0.66 speech+music, <0.33 mostly music)
-        - **Acousticness**: Confidence measure of a track being acoustic
-        - **Instrumentalness**: No vocals probability (values >0.5 likely instrumental)
-        - **Liveness**: Audience presence (values >0.8 likely live)
-        - **Valence**: Musical positiveness (high positive, low negative)
-        - **Tempo**: Beats per minute (BPM)
-        
-        Additional attributes:
-        - **Temp**: Temperature in Fahrenheit
-        - **hour_info**: Current hour in seconds
-        - **day_of_week**: Day song played (0=Monday, 6=Sunday)
-        - **month**: Month song played (1=January, 12=December)
-        """
+            """
+            Song attributes (all stored as strings):
+            
+            - **Song Name**: The name of the song
+            - **Artist Name(s)**: The artist(s) of the song
+            - **Genre(s)**: The genre(s) of the artist(s)
+            - **Popularity**: Rating (0-100) of the song's popularity
+            - **Duration**: Duration of the track in milliseconds
+            - **Key**: Track key (0=C, 1=C♯/D♭, ..., -1=unknown)
+            
+            Spotify attributes (0.0 least / 1.0 most, unless noted):
+            
+            - **Danceability**: How suitable a track is for dancing (tempo, beat)
+            - **Energy**: Intensity and activity (e.g. death metal high, Bach low)
+            - **Loudness**: Overall loudness in dB (typically -60 to 0 dB)
+            - **Speechiness**: Presence of spoken words (values >0.66 mostly spoken, 0.33-0.66 speech+music, <0.33 mostly music)
+            - **Acousticness**: Confidence measure of a track being acoustic
+            - **Instrumentalness**: No vocals probability (values >0.5 likely instrumental)
+            - **Liveness**: Audience presence (values >0.8 likely live)
+            - **Valence**: Musical positiveness (high positive, low negative)
+            - **Tempo**: Beats per minute (BPM)
+            
+            Additional attributes:
+            - **Temp**: Temperature in Fahrenheit
+            - **hour_info**: Current hour in seconds
+            - **day_of_week**: Day song played (0=Monday, 6=Sunday)
+            - **month**: Month song played (1=January, 12=December)
+            """
 
-        data = [
-            str(playback["item"]["name"]).replace(",", ""),
-            artists,
-            ".".join(genres),
-            popularity,
-            str(audio_features[0]["danceability"]),
-            str(audio_features[0]["energy"]),
-            str(audio_features[0]["loudness"]),
-            str(audio_features[0]["speechiness"]),
-            str(audio_features[0]["acousticness"]),
-            str(audio_features[0]["instrumentalness"]),
-            str(audio_features[0]["liveness"]),
-            str(audio_features[0]["valence"]),
-            str(audio_features[0]["tempo"]),
-            str(audio_features[0]["duration_ms"]),
-            str(audio_features[0]["key"]),
-            temp,
-            get_hour_info(),
-            day_of_week,
-            month,
-        ]
-        print(data)
-        f.write(", ".join(data) + "\n")
+            data = [
+                str(playback["item"]["name"]).replace(",", ""),
+                artists,
+                ".".join(genres),
+                popularity,
+                str(audio_features[0]["danceability"]),
+                str(audio_features[0]["energy"]),
+                str(audio_features[0]["loudness"]),
+                str(audio_features[0]["speechiness"]),
+                str(audio_features[0]["acousticness"]),
+                str(audio_features[0]["instrumentalness"]),
+                str(audio_features[0]["liveness"]),
+                str(audio_features[0]["valence"]),
+                str(audio_features[0]["tempo"]),
+                str(audio_features[0]["duration_ms"]),
+                str(audio_features[0]["key"]),
+                temp,
+                get_hour_info(),
+                day_of_week,
+                month,
+            ]
+            print(data)
+            f.write(", ".join(data) + "\n")
+    except TypeError as error:
+        print("An error occurred in the main function. Likely an issue with Spotify DJ.")
+        print(error)
+    finally:
         f.close()
 
 
 """
-Runs the main function every 10 seconds.
+Runs the Main function every 10 seconds.
 """
 while True:
     main()
