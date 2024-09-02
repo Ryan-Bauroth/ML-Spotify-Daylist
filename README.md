@@ -8,3 +8,12 @@ b) **Create a prediction algorithm** based on this data to predict what music th
 c) Use this prediction alogrithm to **create a custom user radio** which responds to how the user interacts with songs to inform future predictions
 
 ## Installation & Use
+
+For either option below, the first step is to clone the repository by copying the HTTPS link into the IDE of your choice
+
+### How to Generate a Dataset
+
+1) Run the record.py file. This will redirect you to localhost on your device. Allow my app to access your data.
+2) Listen to music & it will automatically be stored in the data.csv file.
+
+### How to Run the Prediction Algorithm
