@@ -18,7 +18,7 @@ For either option below, the first step is to clone the repository by copying th
 
 **Here is an example dataset graphed:**
 ![time:valence daily chart d3](https://github.com/user-attachments/assets/2fed2504-bdd2-4902-accb-e5821f035b47)
-__X-axis is time (seconds passed since midnight). Y-axis is valance (positivity of the music. 1 is the most positive). Colors represent different days of the week.__
+_X-axis is time (seconds passed since midnight). Y-axis is valance (positivity of the music. 1 is the most positive). Colors represent different days of the week._
 
 
 ### How to Run the Prediction Algorithm
