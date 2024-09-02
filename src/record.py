@@ -145,8 +145,13 @@ def get_month_info():
 
 def main():
     """
+    :return: the amount of time until the main function should be run again
+
     Main function of record.py file
     """
+
+    # sets how long until the main function should be run again
+    r_time = 10
 
     # gets information about the users current playback
     playback = get_spotify_playing()
@@ -233,16 +238,21 @@ def main():
             ]
             print(data)
             f.write(", ".join(data) + "\n")
+        elif time.time() * 1000 - playback["timestamp"] < 15000:
+            # calculates the amount of time before the song passes the 15 second threshold
+            # TODO i have no idea why but every time it is 3 seconds too early so this is a quick fix
+            r_time = (15000 - (time.time() * 1000 - playback["timestamp"]))/1000 + 3
     except TypeError as error:
         print("An error occurred in the main function. Likely an issue with Spotify DJ.")
         print(error)
     finally:
+        # closes file and returns next wait time
         f.close()
+        return r_time
 
 
 """
-Runs the Main function every 10 seconds.
+Runs the Main function every ~10 seconds, adjusting its wait time based on how far the user is into the song.
 """
 while True:
-    main()
-    time.sleep(10)
+    time.sleep(main())
