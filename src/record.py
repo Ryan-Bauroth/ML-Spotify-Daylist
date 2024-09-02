@@ -159,17 +159,20 @@ def main():
     if lines:
         lastline = lines[-1].strip().split(",")
 
+    # sets the minimum listening time before a song gets 'counted' (s) * (1000) = ms
+    min_listen_time = 15 * 1000
+
     # this try catch is included just in case something goes wrong with spotify (likely a Spotify AI DJ issue)
     try:
         # only updates datatable if user is listening to music, the current song being played is not already stored in the
-        # datatable, and the song has been playing for 15 seconds
-        if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and playback[
-            "progress_ms"] >= 15000 and playback["currently_playing_type"] == "track":
+        # datatable, and the song has been playing for the minimum listening time (ms)
+        if playback and str(playback["item"]["name"].strip()).replace(",", "") not in lastline and time.time() * 1000 - playback[
+            "timestamp"] >= min_listen_time and playback["progress_ms"] >= min_listen_time and playback["currently_playing_type"] == "track":
 
             # gets datatable information and formats it as str
             artists = ""
             for artist in playback["item"]["artists"]:
-                artists += str(artist["name"]).replace(".", "") + "."
+                artists += str(artist["name"]).replace(".", "").replace(",","").strip() + "."
             artists = artists.rstrip(".")
             audio_features = get_spotify_audio_features(playback)
             genres = get_spotify_genre(playback)
