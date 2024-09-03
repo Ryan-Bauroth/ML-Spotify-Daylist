@@ -238,12 +238,11 @@ def main():
             ]
             print(data)
             f.write(", ".join(data) + "\n")
-        elif time.time() * 1000 - playback["timestamp"] < 15000:
+        elif playback and time.time() * 1000 - playback["timestamp"] < 15000:
             # calculates the amount of time before the song passes the 15-second threshold
             # i have no idea why but every time it is 3 seconds too early so this is a quick fix
             r_time = (15000 - (time.time() * 1000 - playback["timestamp"]))/1000 + 3
     except TypeError as error:
-        print("An error occurred in the main function. Likely an issue with Spotify DJ.")
         print(error)
     finally:
         # closes file and returns next wait time
