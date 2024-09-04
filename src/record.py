@@ -194,7 +194,6 @@ def main():
             - **Genre(s)**: The genre(s) of the artist(s)
             - **Popularity**: Rating (0-100) of the song's popularity
             - **Duration**: Duration of the track in milliseconds
-            - **Key**: Track key (0=C, 1=C♯/D♭, ..., -1=unknown)
             
             Spotify attributes (0.0 least / 1.0 most, unless noted):
             
@@ -230,7 +229,6 @@ def main():
                 str(audio_features[0]["valence"]),
                 str(audio_features[0]["tempo"]),
                 str(audio_features[0]["duration_ms"]),
-                str(audio_features[0]["key"]),
                 temp,
                 get_hour_info(),
                 day_of_week,
