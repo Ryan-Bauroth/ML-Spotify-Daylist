@@ -1,4 +1,6 @@
 data.csv
+dataset.csv
+spotify_songs.csv
 .cache
 .cache.sqlite
 .env
