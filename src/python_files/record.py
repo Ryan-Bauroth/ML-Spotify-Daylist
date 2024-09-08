@@ -31,7 +31,7 @@ async def get_weather_info():
     :return: The current temperature in Fahrenheit.
     """
     # Setup the Open-Meteo API client with cache and retry on error
-    cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+    cache_session = requests_cache.CachedSession('../.cache', expire_after=3600)
     retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
     openmeteo = openmeteo_requests.Client(session=retry_session)
 
@@ -157,7 +157,7 @@ def main():
     playback = get_spotify_playing()
 
     # gets the most recent item in the datatable
-    f = open('data.csv', 'a+')
+    f = open('../data.csv', 'a+')
     f.seek(0)
     lines = f.readlines()
     lastline = [""]
@@ -248,8 +248,10 @@ def main():
         return r_time
 
 
-"""
-Runs the Main function every ~10 seconds, adjusting its wait time based on how far the user is into the song.
-"""
-while True:
-    time.sleep(main())
+
+if __name__ == "__main__":
+    """
+    Runs the Main function every ~10 seconds, adjusting its wait time based on how far the user is into the song.
+    """
+    while True:
+        time.sleep(main())
