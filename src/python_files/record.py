@@ -191,6 +191,7 @@ def main():
             
             - **Song Name**: The name of the song
             - **Artist Name(s)**: The artist(s) of the song
+            - **id**: Spotify ID of the song
             - **Genre(s)**: The genre(s) of the artist(s)
             - **Popularity**: Rating (0-100) of the song's popularity
             - **Duration**: Duration of the track in milliseconds
@@ -217,6 +218,7 @@ def main():
             data = [
                 str(playback["item"]["name"]).replace(",", ""),
                 artists,
+                str(playback["item"]["id"]),
                 ".".join(genres),
                 popularity,
                 str(audio_features[0]["danceability"]),
