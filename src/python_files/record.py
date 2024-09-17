@@ -149,7 +149,6 @@ def main():
 
     Main function of record.py file
     """
-
     # sets how long until the main function should be run again
     r_time = 10
 

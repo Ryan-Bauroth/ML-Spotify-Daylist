@@ -55,8 +55,11 @@ def get_recs(songname, artists):
     )
     return recs["tracks"]
 
+def get_genres():
+    return sp.recommendation_genre_seeds()
+
 if __name__ == "__main__":
-    print(sp.recommendation_genre_seeds())
+    print(sp.recommendation_genre_seeds()['genres'])
     # song_uris = ['spotify:track:6gQrm0rwg6hok8IxzysD8m', 'spotify:track:4f8Mh5wuWHOsfXtzjrJB3t',
     #  'spotify:track:36FZL9SzRh5BhtG1cUyGWr', 'spotify:track:3KZ5nrQ9jzquvFl5c9c45d',
     #  'spotify:track:1YZmYp9jZ4Veq6lZpiuV69', 'spotify:track:7ARveOiD31w2Nq0n5FsSf8',
