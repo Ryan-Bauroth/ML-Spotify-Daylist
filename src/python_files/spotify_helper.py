@@ -19,13 +19,18 @@ sp = spotipy.Spotify(
 
 
 
-def update_playlist(songs, artists, playlist_id=None):
+def update_playlist(songs, artists, playlist_id=None, song_ids=[]):
+    if song_ids is None:
+        song_ids = []
     id = sp.me()["id"]
 
     song_uris = []
 
-    for song in songs:
-        song_data =  sp.search("track:\"" + song + "\" artist:\"" + artists[songs.index(song)].split(".")[0] + "\"", 10, 0,
+    for song_idx in range(len(songs)):
+        if len(song_ids) > 0 and str(song_ids[song_idx]) != "":
+            song_data = [sp.track(str(song_ids[song_idx]))]
+        else:
+            song_data =  sp.search("track:\"" + songs[song_idx] + "\" artist:\"" + artists[songs.index(songs[song_idx])].split(".")[0] + "\"", 10, 0,
                       "track")["tracks"]["items"]
         if len(song_data) > 0:
             song_uris.append(song_data[0]["uri"])

@@ -9,36 +9,26 @@ median = df['popularity'].median()
 df['popularity'] = df['popularity'].fillna(median)
 df['genres'] = df['genres'].fillna('')
 
-genres = get_genres()['genres']
+def cluster_songs_by_genre(df):
+    genres = get_genres()['genres']
 
-genre_song_dict = {}
+    genre_song_dict = {}
 
-for song_idx in range(len(df['songname'])):
-    genre_dict = {}
-    song_genres = str(df['genres'][song_idx]).strip().split('.')
-    for song_genre in song_genres:
-        for genre in genres:
-            if genre in song_genre:
-                if genre_dict.get(genre) is None:
-                    genre_dict[genre] = 1
-    for saved_genre in genre_dict:
-        if genre_song_dict.get(saved_genre) is None:
-            genre_song_dict[saved_genre] = []
-        genre_song_dict[saved_genre].append(song_idx)
-print("done")
+    for song_idx in range(len(df['songname'])):
+        genre_dict = {}
+        song_genres = str(df['genres'][song_idx]).strip().split('.')
+        for song_genre in song_genres:
+            for genre in genres:
+                if genre in song_genre:
+                    if genre_dict.get(genre) is None:
+                        genre_dict[genre] = 1
+        for saved_genre in genre_dict:
+            if genre_song_dict.get(saved_genre) is None:
+                genre_song_dict[saved_genre] = []
+            genre_song_dict[saved_genre].append(song_idx)
+    return genre_song_dict
 
-cleaned_df = df.drop(['songname', 'artist', 'id', 'genres', 'temp', 'time', 'dayofweek', 'month', 'duration_ms', 'popularity'], axis=1)
-
-
-# Assuming cleaned_df is your DataFrame
-cleaned_df = MinMaxScaler().fit_transform(cleaned_df)
-
-cleaned_df = pd.DataFrame(cleaned_df)
-
-# Convert cleaned_df to NumPy array for faster operations
-cleaned_np = np.array(cleaned_df)
-
-def get_avg_distance(genre, cleaned_np, weight=None):
+def get_avg_distance(genre, cleaned_np, genre_song_dict, weight=None):
     """
     Calculate the average song difference for a given genre.
 
@@ -79,34 +69,56 @@ def get_avg_distance(genre, cleaned_np, weight=None):
 
     return average_song_diff
 
-genre_weight_dict = {}
 
-for genre in genre_song_dict:
-    const_score = get_avg_distance(genre, cleaned_np)
+def weight_genres(genre_song_dict, cleaned_np, cleaned_df):
 
-    if const_score is None:
-        continue
+    genre_weight_dict = {}
 
-    col_scores = []
+    for genre in genre_song_dict:
+        const_score = get_avg_distance(genre, cleaned_np, genre_song_dict)
 
-    for col in cleaned_df:
-        new_np_arr = np.delete(cleaned_np, col, axis=1)
-        col_scores.append(const_score - get_avg_distance(genre, new_np_arr))
+        if const_score is None:
+            continue
 
-    total_impact = np.sum(col_scores)
-    feature_importance_scores = (col_scores / total_impact)
+        col_scores = []
 
-    # Calculate opposite scores
-    max_possible_score = 1
-    opposite_scores = max_possible_score - feature_importance_scores
+        for col in cleaned_df:
+            new_np_arr = np.delete(cleaned_np, col, axis=1)
+            col_scores.append(const_score - get_avg_distance(genre, new_np_arr, genre_song_dict))
 
-    # Normalize opposite scores to ensure they sum to 1
-    total_opposite_impact = np.sum(opposite_scores)
-    genre_weight_dict[genre] = opposite_scores / total_opposite_impact
+        total_impact = np.sum(col_scores)
+        feature_importance_scores = (col_scores / total_impact)
+
+        # Calculate opposite scores
+        max_possible_score = 1
+        opposite_scores = max_possible_score - feature_importance_scores
+
+        # Normalize opposite scores to ensure they sum to 1
+        total_opposite_impact = np.sum(opposite_scores)
+        genre_weight_dict[genre] = opposite_scores / total_opposite_impact
+
+    return genre_weight_dict
 
 
-print(get_avg_distance('soul', cleaned_np, np.full(9, 1 / 9)))
-print(get_avg_distance('soul', cleaned_np, genre_weight_dict['soul']))
+if __name__ == "__main__":
+    genre_song_dict = cluster_songs_by_genre(df)
+    print("done")
+
+    cleaned_df = df.drop(
+        ['songname', 'artist', 'id', 'genres', 'temp', 'time', 'dayofweek', 'month', 'duration_ms', 'popularity'],
+        axis=1)
+
+    # Assuming cleaned_df is your DataFrame
+    cleaned_df = MinMaxScaler().fit_transform(cleaned_df)
+
+    cleaned_df = pd.DataFrame(cleaned_df)
+
+    # Convert cleaned_df to NumPy array for faster operations
+    cleaned_np = np.array(cleaned_df)
+
+    genre_weights = weight_genres(genre_song_dict, cleaned_np, cleaned_df)
+    print(genre_weights)
+
 
 
 # print({key: [round(v,10) for v in val] for key, val in genre_weight_dict.items()})
