@@ -10,7 +10,8 @@ df['popularity'] = df['popularity'].fillna(median)
 df['genres'] = df['genres'].fillna('')
 
 def cluster_songs_by_genre(df):
-    genres = get_genres()['genres']
+    # genres = get_genres()['genres']
+    genres = get_clustering_genres()
 
     genre_song_dict = {}
 
@@ -99,6 +100,16 @@ def weight_genres(genre_song_dict, cleaned_np, cleaned_df):
 
     return genre_weight_dict
 
+def get_clustering_genres():
+    dataset = pd.read_csv('../dataset.csv')
+
+    genre_name_arr = get_genres()['genres']
+
+    for genre_name in dataset['genres']:
+        if genre_name not in genre_name_arr:
+            genre_name_arr.append(genre_name)
+
+    return genre_name_arr
 
 if __name__ == "__main__":
     genre_song_dict = cluster_songs_by_genre(df)
