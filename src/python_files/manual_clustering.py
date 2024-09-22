@@ -79,6 +79,8 @@ def weight_genres(genre_song_dict, cleaned_np, cleaned_df):
         const_score = get_avg_distance(genre, cleaned_np, genre_song_dict)
 
         if const_score is None:
+            col_count = len(cleaned_df.T[0])
+            genre_weight_dict[genre] = np.full(col_count, 1/col_count)
             continue
 
         col_scores = []
@@ -111,6 +113,31 @@ def get_clustering_genres():
 
     return genre_name_arr
 
+def sort_song_without_genre(genre_song_dict, cleaned_np, cleaned_df, genre_weights, song_idx):
+    genre_song_data_dict = {}
+
+    for genre in genre_song_dict:
+        genre_songs = np.zeros((len(genre_song_dict[genre]), cleaned_np.shape[1]))
+        for i, song in enumerate(genre_song_dict[genre]):
+            genre_songs[i, :] = cleaned_np[song] * genre_weights[genre]
+
+        genre_song_data_dict[genre] = genre_songs
+
+    genre_diff_dict = {}
+
+    for genre in genre_song_dict:
+        genre_medians = np.median(genre_song_data_dict[genre], axis=0)
+        input_song_weighted = cleaned_df.T[song_idx] * genre_weights[genre]
+        genre_diff_dict[genre] = np.linalg.norm(genre_medians - input_song_weighted)
+
+    genre_diff_dict = {genre: distance for genre, distance in genre_diff_dict.items() if distance != 0}
+    max_distance = max(genre_diff_dict.values())
+    normalized_distances = {genre: max_distance - distance for genre, distance in genre_diff_dict.items()}
+
+    sorted_vals = sorted(normalized_distances.items(), key=lambda item: item[1], reverse=True)[:3]
+
+    return [genre for genre, _ in sorted_vals]
+
 if __name__ == "__main__":
     genre_song_dict = cluster_songs_by_genre(df)
     print("done")
@@ -128,8 +155,9 @@ if __name__ == "__main__":
     cleaned_np = np.array(cleaned_df)
 
     genre_weights = weight_genres(genre_song_dict, cleaned_np, cleaned_df)
-    print(genre_weights)
+
+    print(sort_song_without_genre(genre_song_dict, cleaned_np, cleaned_df, genre_weights, 5))
 
 
 
-# print({key: [round(v,10) for v in val] for key, val in genre_weight_dict.items()})
+    # print({key: [round(v,10) for v in val] for key, val in genre_weight_dict.items()})
