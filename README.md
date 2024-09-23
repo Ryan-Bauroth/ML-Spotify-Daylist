@@ -2,10 +2,10 @@
 
 ## Description
 
-This project has **3 main tasks**:<br/>
+The goal of this project is to:<br/>
 a) **Gather data** on a user's Spotify listening automatically<br/>
-b) **Create a prediction algorithm** based on this data to predict what music that user would want given some data<br/>
-c) Use this prediction alogrithm to **create a custom user radio** which responds to how the user interacts with songs to inform future predictions
+b) **Create a prediction algorithm** based on this data to predict what music that user would want given the temperate, time of day, month, and day of the week<br/>
+c) **Generate a playlist** based on these predictions and upload it to Spotify
 
 ## Installation & Use
 
@@ -22,3 +22,5 @@ _X-axis is time (seconds passed since midnight). Y-axis is valance (positivity o
 
 
 ### How to Run the Prediction Algorithm
+
+1) 
