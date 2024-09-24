@@ -23,4 +23,4 @@ _X-axis is time (seconds passed since midnight). Y-axis is valance (positivity o
 
 ### How to Run the Prediction Algorithm
 
-1) 
+1) Run the most recent song prediction Jupiter Notebook to generate your playlist.
