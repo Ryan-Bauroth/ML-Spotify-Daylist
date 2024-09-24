@@ -20,6 +20,20 @@ sp = spotipy.Spotify(
 
 
 def update_playlist(songs, artists, playlist_id=None, song_ids=[]):
+    """
+    Update a playlist with the given songs and artists.
+
+    :param songs: a list of song titles
+    :type songs: list
+    :param artists: a list of artist names corresponding to the songs
+    :type artists: list
+    :param playlist_id: the ID of the playlist to update, defaults to None
+    :type playlist_id: str, optional
+    :param song_ids: a list of song IDs corresponding to the songs, defaults to an empty list
+    :type song_ids: list, optional
+    :return: None
+    :rtype: None
+    """
     if song_ids is None:
         song_ids = []
     id = sp.me()["id"]
@@ -49,6 +63,13 @@ def update_playlist(songs, artists, playlist_id=None, song_ids=[]):
     sp.playlist_add_items(playlist_id, song_uris, position=0)
 
 def get_recs(songname, artists):
+    """
+    Retrieve song recommendations based on a given song name and artist.
+
+    :param songname: The name of the song.
+    :param artists: The artists associated with the song.
+    :return: A list of recommended tracks.
+    """
     song_uris = []
     song_data = sp.search("track:\"" + songname + "\" artist:\"" + artists + "\"", 10, 0,"track")["tracks"]["items"]
     if len(song_data) > 0:

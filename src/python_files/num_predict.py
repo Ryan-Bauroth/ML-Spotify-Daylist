@@ -3,10 +3,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
-from sklearn.preprocessing import LabelEncoder
 
 
 def train_gradient_boosting_regressor(features, targets):
+    """
+    Train Gradient Boosting Regressor
+
+    :param features: The input features for training the model.
+    :param targets: The target values for training the model.
+    :return: The trained multi-output gradient boosting regressor, x_test, and y_test.
+
+    This function splits the data into training and testing sets using the train_test_split function.
+    It initializes a Gradient Boosting Regressor and wraps it in a MultiOutputRegressor to handle multiple targets.
+    The model is then trained using the training data.
+
+    """
     # Split the data into training and testing sets
     x_train, x_test, y_train, y_test = train_test_split(features, targets ,random_state=42)
 

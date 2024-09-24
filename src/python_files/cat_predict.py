@@ -8,7 +8,13 @@ from sklearn.metrics import classification_report
 
 
 def train_random_forest_classifier(features, target):
+    """
+    Trains a random forest classifier model using the given features and target data.
 
+    :param features: The input features used to train the model.
+    :param target: The target variable used to train the model.
+    :return: A tuple containing the trained model, the test features, and the test target variables.
+    """
     # Preprocessing pipeline for features
     preprocessor = Pipeline(steps=[
         ('scaler', StandardScaler())

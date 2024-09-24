@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 from src.python_files.spotify_helper import get_genres
 
@@ -10,6 +10,12 @@ df['popularity'] = df['popularity'].fillna(median)
 df['genres'] = df['genres'].fillna('')
 
 def cluster_songs_by_genre(df):
+    """
+    This function clusters songs by genre based on the provided dataframe.
+
+    :param df: A pandas dataframe containing songs and their respective genres.
+    :return: A dictionary containing the genres as keys and a list of song indices as values.
+    """
     # genres = get_genres()['genres']
     genres = get_clustering_genres()
 
@@ -72,7 +78,15 @@ def get_avg_distance(genre, cleaned_np, genre_song_dict, weight=None):
 
 
 def weight_genres(genre_song_dict, cleaned_np, cleaned_df):
+    """
+    Calculates the weight of genres based on their importance scores.
 
+    :param genre_song_dict: A dictionary mapping genre names to song lists.
+    :param cleaned_np: A numpy array containing the cleaned data.
+    :param cleaned_df: A pandas dataframe containing the cleaned data.
+    :return: A dictionary mapping genre names to their weight values.
+
+    """
     genre_weight_dict = {}
 
     for genre in genre_song_dict:
@@ -103,7 +117,13 @@ def weight_genres(genre_song_dict, cleaned_np, cleaned_df):
     return genre_weight_dict
 
 def get_clustering_genres():
+    """
+    Returns a list of genres found in the dataset.
+
+    :return: A list of genres.
+    """
     dataset = pd.read_csv('../dataset.csv')
+    other_dataset = pd.read_csv('../spotify_songs.csv')
 
     genre_name_arr = get_genres()['genres']
 
@@ -111,9 +131,24 @@ def get_clustering_genres():
         if genre_name not in genre_name_arr:
             genre_name_arr.append(genre_name)
 
+    for genre_name in other_dataset['genres']:
+        if genre_name not in genre_name_arr:
+            genre_name_arr.append(genre_name)
+
     return genre_name_arr
 
 def sort_song_without_genre(genre_song_dict, cleaned_np, cleaned_df, genre_weights, song_idx):
+    """
+    Sorts songs without a specified genre based on their similarity to genres using a weighted distance metric.
+
+    :param genre_song_dict: A dictionary mapping genres to a list of song indices belonging to that genre.
+    :param cleaned_np: A numpy array representing the cleaned song data.
+    :param cleaned_df: A pandas DataFrame representing the cleaned song data.
+    :param genre_weights: A dictionary mapping genres to their respective weights.
+    :param song_idx: The index of the input song to compare with genres.
+
+    :return: A list of up to three genres that are most similar to the input song.
+    """
     genre_song_data_dict = {}
 
     for genre in genre_song_dict:

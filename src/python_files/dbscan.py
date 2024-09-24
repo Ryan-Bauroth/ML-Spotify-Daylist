@@ -5,7 +5,6 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from sklearn.cluster import DBSCAN
 
 # Load your data
 df = pd.read_csv('../data.csv')
