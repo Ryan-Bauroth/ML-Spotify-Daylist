@@ -11,6 +11,18 @@ c) **Generate a playlist** based on these predictions and upload it to Spotify
 
 For either option below, the first step is to clone the repository by copying the HTTPS link into the IDE of your choice
 
+Then, create a .env file with the following format:
+
+CLIENT_ID=YOUR_SPOTIFY_CLIENT_ID
+CLIENT_SECRET=YOUR_SPOTIFY_CLIENT_SECRET
+REDIRECT_URI=http://localhost:8080/callback
+
+PLAYLIST_ID=A_SPOTIFY_PLAYLIST_ID
+(if you don't have one, you can generate a new playlist by deleting this paramter)
+
+LONGITUDE=YOUR_LONGITUDE
+LATITUDE=YOUR_LATITUDE
+
 ### How to Generate a Dataset
 
 1) Run the record.py file. This will redirect you to localhost on your device. Allow my app to access your data.
