@@ -1,6 +1,6 @@
 # ML Daylist
 
-![Screenshot_2024-09-24_at_9 38 36_PM-removebg-3](https://github.com/user-attachments/assets/53e81554-9794-42ba-bb7f-5f3fb850d2f3)
+[![Screenshot_2024-09-24_at_9 38 36_PM-removebg-3](https://github.com/user-attachments/assets/53e81554-9794-42ba-bb7f-5f3fb850d2f3)](https://open.spotify.com/playlist/3NKOueAcxMhburUy6pxjnX?si=dd6b36f7df8f466b)
 
 ## Description
 
