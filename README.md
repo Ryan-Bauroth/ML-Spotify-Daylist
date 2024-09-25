@@ -1,6 +1,7 @@
 # ML Daylist
 
-[![Screenshot_2024-09-24_at_9 38 36_PM-removebg-3](https://github.com/user-attachments/assets/53e81554-9794-42ba-bb7f-5f3fb850d2f3)](https://open.spotify.com/playlist/3NKOueAcxMhburUy6pxjnX?si=dd6b36f7df8f466b)
+[![Screenshot_2024-09-24_at_9 38 36_PM-removebg-3](https://github.com/user-attachments/assets/53e81554-9794-42ba-bb7f-5f3fb850d2f3)](https://open.spotify.com/playlist/3NKOueAcxMhburUy6pxjnX?si=dd6b36f7df8f466b)<br/>
+_The above image is a link to the playlist_
 
 ## Description
 
@@ -31,6 +32,8 @@ Then, create a .env file with the following format:
 2) Listen to music & it will automatically be stored in the data.csv file.
 
 **Here is an example dataset graphed:**
+<br/>
+
 ![time:valence daily chart d3](https://github.com/user-attachments/assets/2fed2504-bdd2-4902-accb-e5821f035b47)
 _X-axis is time (seconds passed since midnight). Y-axis is valence (positivity of the music. 1 is the most positive). Colors represent different days of the week._
 
