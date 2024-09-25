@@ -62,7 +62,7 @@ This prediction algorithm primarily uses two models to predict songs:
 
 `features = pd.concat([features, classifier_target], axis=1)`<br/>
 
-3) For the song predictions, I utilize a gradient boosted regression model. This model predicts certain song attributes such as valence (positivity of the song) or energy. These attributes are the same attributes that I gathered from Spotify's API as part of the data collection.<br/>
+3) For the song predictions, I utilize a gradient boosted regression model because of its ability to take each training feature individually. A lot of models I found other than this one would average all the seperate features together, which was not something I wanted as each feature represents a different aspect of the song (such as valence/positivity of the song or energy). These attributes are the same attributes that I gathered from Spotify's API as part of the data collection.<br/>
 
 `multi_output_gbr = train_gradient_boosting_regressor(features, targets)[0]`<br/>
 
