@@ -1,3 +1,9 @@
+"""
+Author: Ryfi
+
+No longer used. Former clustering algorithm.
+"""
+
 import torch
 import torch.nn as nn
 import torch.optim as optim

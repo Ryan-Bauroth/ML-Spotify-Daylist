@@ -1,3 +1,9 @@
+"""
+Author: Ryfi
+
+Functions used in song_predictions.ipynb in order to help cluster songs by genre
+"""
+
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np

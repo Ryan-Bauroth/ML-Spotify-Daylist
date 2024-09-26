@@ -1,3 +1,9 @@
+"""
+Author: Ryfi
+
+Functions used by song_predictions.ipynb to run spotify API requests.
+"""
+
 import os
 import spotipy
 from dotenv import load_dotenv

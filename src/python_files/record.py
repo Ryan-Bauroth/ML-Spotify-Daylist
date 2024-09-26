@@ -1,3 +1,9 @@
+"""
+Author: Ryfi
+
+Recording file for data.csv. Functions also used in song_predictions.ipynb to provide current weather and time data.
+"""
+
 import os
 from dotenv import load_dotenv
 import time

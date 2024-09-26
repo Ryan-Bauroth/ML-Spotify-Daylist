@@ -1,3 +1,9 @@
+"""
+Author: Ryfi
+
+The random forest classifier function
+"""
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MultiLabelBinarizer
