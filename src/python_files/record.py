@@ -252,7 +252,7 @@ def main():
 
 if __name__ == "__main__":
     """
-    Runs the Main function every ~10 seconds, adjusting its wait time based on how far the user is into the song.
+    Runs the Main function every ~15 seconds, adjusting its wait time based on how far the user is into the song.
     """
     while True:
         time.sleep(main())

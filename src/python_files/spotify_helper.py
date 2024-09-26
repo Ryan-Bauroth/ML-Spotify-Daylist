@@ -24,15 +24,9 @@ def update_playlist(songs, artists, playlist_id=None, song_ids=[]):
     Update a playlist with the given songs and artists.
 
     :param songs: a list of song titles
-    :type songs: list
     :param artists: a list of artist names corresponding to the songs
-    :type artists: list
     :param playlist_id: the ID of the playlist to update, defaults to None
-    :type playlist_id: str, optional
     :param song_ids: a list of song IDs corresponding to the songs, defaults to an empty list
-    :type song_ids: list, optional
-    :return: None
-    :rtype: None
     """
     if song_ids is None:
         song_ids = []

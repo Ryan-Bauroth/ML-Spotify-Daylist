@@ -39,9 +39,10 @@ if __name__ == "__main__":
 
     df = pd.DataFrame(data)
 
-    df = df.drop(columns=['songname', 'artist'])
+    df = df.drop(columns=['songname', 'artist', 'id'])
 
     df["popularity"] = df["popularity"].fillna(df["popularity"].median())
+    df["genres"] = df["genres"].fillna("")
 
     # Define input features and target variables
     x = df[['time', 'dayofweek', 'month', 'temp']]
@@ -55,7 +56,7 @@ if __name__ == "__main__":
                                  columns=["time", "dayofweek", "month", "temp"])
 
     # Make predictions
-    y_pred = multi_output_gbr.predict(predict_value)
+    y_pred = multi_output_gbr.predict(x_test)
 
     print(y_pred)
     print((df.drop(columns=['time', 'dayofweek', 'month', 'temp', 'genres'])).keys())
