@@ -103,7 +103,7 @@ Great! This project really works. I have found myself using the ML_Daylist (as I
 
 Here are some of the resources I used while creating this project
 
-- ChatGPT and JetBrains AI were great for explaining errors and getting me started with Machine Learning (as this is my first Machine Learning/AI project)
+- ChatGPT and JetBrains AI were great for explaining errors and getting me started with Machine Learning (as this is my first Machine Learning/AI project). I did use AI to generate some of my model code, as noted in the documentation.
 - [Spotipy](https://spotipy.readthedocs.io/en/2.24.0/) was the Library I used to do all my Spotify API calls
 - I used [Open Metro](https://open-meteo.com) for all my weather related calls when collecting data
 - I got some inspiration for my weighted genres concept from the person who made the actual Spotify recommendation algorithm on [this podcast](https://www.youtube.com/watch?v=Q8W2IGiSdhc)
